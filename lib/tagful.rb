@@ -53,22 +53,28 @@ module Tagful
         end
       end
 
-      class_eval('module TagfulMethods; end')
-      class_eval('TagfulMethods').module_eval do
-        define_method(method_id) do |*args, &block|
-          begin
-            super(*args, &block)
-          rescue => e
-            if error_class
+      tagful_methods_module = class_eval('module TagfulMethods; self; end')
+      tagful_methods_module.module_eval do
+        if error_class
+          define_method(method_id) do |*args, &block|
+            begin
+              super(*args, &block)
+            rescue => e
               raise error_class, e.message
-            else
+            end
+          end
+        else
+          define_method(method_id) do |*args, &block|
+            begin
+              super(*args, &block)
+            rescue => e
               e.extend(error_module) and raise
             end
           end
         end
         send visibility, method_id
       end
-      class_eval('prepend(TagfulMethods)')
+      class_eval { prepend(tagful_methods_module) }
 
       method_id
     end
