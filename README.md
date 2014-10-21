@@ -25,6 +25,8 @@ Or install it yourself as:
 Tagging your exception with `tagful`
 
     class Person
+      include Tagful
+
       # Ruby 2.1 or later
       tagful\
       def hello
@@ -49,6 +51,8 @@ Tagging your exception with `tagful`
 You can specify your error module by `tagful_with`:
 
     class Robot
+      include Tagful
+
       module Broken; end
 
       tagful_with Broken
@@ -69,6 +73,8 @@ You can specify your error module by `tagful_with`:
 or pass your error module to `tagful`:
 
     class Person
+      include Tagful
+
       module NoManner; end
 
       def eat
@@ -87,6 +93,8 @@ or pass your error module to `tagful`:
 You can use `Class` instead of `Module`:
 
     class Pizza
+      include Tagful
+
       class NotFound < ArgumentError
         def exception(message = nil)
           super("not found: #{message}")
