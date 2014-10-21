@@ -24,94 +24,102 @@ Or install it yourself as:
 
 Tagging your exception with `tagful`
 
-    class Person
-      include Tagful
+```ruby
+class Person
+  include Tagful
 
-      # Ruby 2.1 or later
-      tagful\
-      def hello
-        raise 'hello'
-      end
+  # Ruby 2.1 or later
+  tagful\
+  def hello
+    raise 'hello'
+  end
 
-      # Ruby 2.0
-      def hello
-        raise 'hello'
-      end
-      tagful :hello
-    end
+  # Ruby 2.0
+  def hello
+    raise 'hello'
+  end
+  tagful :hello
+end
 
-    begin
-      Person.new.hello
-    rescue Person::Error => e
-      puts e.message
-    end
-    # => hello
+begin
+  Person.new.hello
+rescue Person::Error => e
+  puts e.message
+end
+# => hello
+```
 
 You can specify your error module by `tagful_with`:
 
-    class Robot
-      include Tagful
+```ruby
+class Robot
+  include Tagful
 
-      module Broken; end
+  module Broken; end
 
-      tagful_with Broken
+  tagful_with Broken
 
-      tagful\
-      def initialize
-        raise ':('
-      end
-    end
+  tagful\
+  def initialize
+    raise ':('
+  end
+end
 
-    begin
-      Robot.new
-    rescue Robot::Broken => e
-      puts e.message
-    end
-    # => :(
+begin
+  Robot.new
+rescue Robot::Broken => e
+  puts e.message
+end
+# => :(
+```
 
 or pass your error module to `tagful`:
 
-    class Person
-      include Tagful
+```ruby
+class Person
+  include Tagful
 
-      module NoManner; end
+  module NoManner; end
 
-      def eat
-        raise 'burps'
-      end
-      tagful :eat, NoManner
-    end
+  def eat
+    raise 'burps'
+  end
+  tagful :eat, NoManner
+end
 
-    begin
-      Person.new.eat
-    rescue Person::NoManner => e
-      puts e.message
-    end
-    # => burps
+begin
+  Person.new.eat
+rescue Person::NoManner => e
+  puts e.message
+end
+# => burps
+```
 
 You can use `Class` instead of `Module`:
 
-    class Pizza
-      include Tagful
+```ruby
+class Pizza
+  include Tagful
 
-      class NotFound < ArgumentError
-        def self.exception(message = nil)
-          super("not found: #{message}")
-        end
-      end
-
-      def take_cheese!
-        raise 'cheese'
-      end
-      tagful :take_cheese!, NotFound
+  class NotFound < ArgumentError
+    def self.exception(message = nil)
+      super("not found: #{message}")
     end
+  end
 
-    begin
-      Pizza.new.take_cheese!
-    rescue Pizza::NotFound => e
-      puts e.message
-    end
-    # => not found: cheese
+  def take_cheese!
+    raise 'cheese'
+  end
+  tagful :take_cheese!, NotFound
+end
+
+begin
+  Pizza.new.take_cheese!
+rescue Pizza::NotFound => e
+  puts e.message
+end
+# => not found: cheese
+```
 
 ## Contributing
 
