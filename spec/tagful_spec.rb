@@ -68,9 +68,26 @@ RSpec.describe Tagful do
   class Pizza
     include Tagful
 
+    class Dirty < StandardError; end
+
+    class Factory
+      def self.exception(message = nil)
+        Dirty.new("something wrong in pizza factory: #{message}")
+      end
+    end
+
     class NotFound < ArgumentError
       def self.exception(message = nil)
         super("not found: #{message}")
+      end
+    end
+
+    tagful_with Pizza::Factory
+
+    tagful\
+    def initialize(contamination = nil)
+      if contamination
+        raise contamination.to_s
       end
     end
 
@@ -88,6 +105,12 @@ RSpec.describe Tagful do
     it 'respect tagful arguments' do
       expect { Robot.new.walk }.to raise_error(Robot::NoBattery) do |error|
         expect(error).to_not be_an(Robot::Broken)
+      end
+    end
+
+    context 'tagged with class' do
+      it 'raise error by class.exception' do
+        expect { Pizza.new('bug') }.to raise_error(Pizza::Dirty, 'something wrong in pizza factory: bug')
       end
     end
   end

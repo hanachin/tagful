@@ -8,8 +8,8 @@ module Tagful
   end
 
   module ClassMethods
-    def tagful_with(error_module)
-      @tagful_error_module = error_module
+    def tagful_with(error_module_or_class)
+      @tagful_error_module_or_class = error_module_or_class
     end
 
     def tagful(method_id, error_module_or_class = nil)
@@ -25,9 +25,22 @@ module Tagful
           raise ::Tagful::NoMethod
         end
 
-      if error_module_or_class.is_a?(Class)
-        error_class = error_module_or_class
+      if error_module_or_class.nil?
+        if @tagful_error_module_or_class.is_a?(Class)
+          error_class = @tagful_error_module_or_class
+        else
+          error_module = @tagful_error_module_or_class
+          error_module ||= 'Error'
+        end
+      else
+        if error_module_or_class.is_a?(Class)
+          error_class = error_module_or_class
+        else
+          error_module = error_module_or_class
+        end
+      end
 
+      if error_class
         class_eval(<<-CODE)
           module TagfulMethods
             #{visibility}
@@ -41,10 +54,6 @@ module Tagful
           prepend(TagfulMethods)
         CODE
       else
-        error_module = error_module_or_class
-        error_module ||= @tagful_error_module
-        error_module ||= 'Error'
-
         class_eval(<<-CODE)
           unless defined?(#{error_module})
             module #{error_module}; end
