@@ -49,7 +49,7 @@ module Tagful
             def #{method_id}(*args)
               super
             rescue => e
-              raise #{error_class}, e.message
+              raise ::#{error_class.name}, e.message
             end
           end
 

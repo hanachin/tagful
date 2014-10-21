@@ -103,6 +103,12 @@ RSpec.describe Tagful do
     end
   end
 
+  class Buzz < StandardError
+    def buzz
+      'top buzz'
+    end
+  end
+
   class Foo
     module Bar
       def self.to_s
@@ -114,6 +120,12 @@ RSpec.describe Tagful do
       end
     end
 
+    class Buzz < StandardError
+      def buzz
+        'Buzz::buzz'
+      end
+    end
+
     include Tagful
 
     tagful_with ::Bar
@@ -122,6 +134,11 @@ RSpec.describe Tagful do
     def bug
       raise 'bug'
     end
+
+    def fizz
+      raise 'buzz'
+    end
+    tagful :fizz, ::Buzz
   end
 
   describe '.tagful_with' do
@@ -146,6 +163,15 @@ RSpec.describe Tagful do
         expect { Foo.new.bug }.to raise_error do |error|
           expect(error).to be_an(::Bar)
           expect(error.bar).to eq 'top bar'
+        end
+      end
+    end
+
+    context 'tagged with top level class, but the same name class exists in class' do
+      it 'tagged by top level class' do
+        expect { Foo.new.fizz }.to raise_error do |error|
+          expect(error).to be_an(::Buzz)
+          expect(error.buzz).to eq 'top buzz'
         end
       end
     end
