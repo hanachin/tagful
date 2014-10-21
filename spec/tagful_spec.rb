@@ -10,22 +10,22 @@ RSpec.describe Tagful do
       raise 'yo'
     end
 
-    tagful\
     def hi
       raise 'hi'
     end
+    tagful :hi
 
-    tagful\
     def hello
       Hello.new
     end
+    tagful :hello
 
     private
 
-    tagful\
     def heart
       # you can't touch my heart
     end
+    tagful :heart
   end
 
   class HoumorPerson < Person
@@ -54,10 +54,10 @@ RSpec.describe Tagful do
 
     tagful_with Broken
 
-    tagful\
     def to_evil
       raise ':('
     end
+    tagful :to_evil
 
     def walk
       raise
@@ -84,12 +84,12 @@ RSpec.describe Tagful do
 
     tagful_with Pizza::Factory
 
-    tagful\
     def initialize(contamination = nil)
       if contamination
         raise contamination.to_s
       end
     end
+    tagful :initialize
 
     def take_cheese!
       raise 'cheese'
@@ -118,10 +118,10 @@ RSpec.describe Tagful do
 
     tagful_with ::Bar
 
-    tagful\
     def bug
       raise 'bug'
     end
+    tagful :bug
   end
 
   class Buzz < StandardError
@@ -141,10 +141,10 @@ RSpec.describe Tagful do
 
     tagful_with ::Buzz
 
-    tagful\
     def fizz
       raise 'buzz'
     end
+    tagful :fizz
   end
 
   class Anonymous
