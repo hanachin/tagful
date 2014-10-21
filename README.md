@@ -104,7 +104,7 @@ You can use `Class` instead of `Module`:
       def take_cheese!
         raise 'cheese'
       end
-      tagful_with :take_cheese!, NotFound
+      tagful :take_cheese!, NotFound
     end
 
     begin
