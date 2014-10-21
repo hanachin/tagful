@@ -28,11 +28,27 @@ RSpec.describe Tagful do
     end
   end
 
+  class HoumorPerson < Person
+    module NotFunny; end
+
+    def say_joke
+      puts 'coffee or tea?'
+      raise 'T'
+    end
+    tagful :say_joke, NotFunny
+  end
+
   class Hello
     class Mad < StandardError; end
 
     def initialize
       raise Mad, "ugh!"
+    end
+  end
+
+  describe '.tagful_with' do
+    it 'tagged method with specified Module' do
+      expect { HoumorPerson.new.say_joke }.to raise_error(HoumorPerson::NotFunny, 'T')
     end
   end
 

@@ -8,7 +8,7 @@ module Tagful
   end
 
   module ClassMethods
-    def tagful(method_id)
+    def tagful(method_id, error_module = nil)
       visibility =
         case
         when public_method_defined?(method_id)
@@ -21,10 +21,11 @@ module Tagful
           raise ::Tagful::NoMethod
         end
 
+      error_module ||= 'Error'
+
       class_eval(<<-CODE)
-        unless defined?(Error)
-          # FIXME: make a tag module customizable
-          module Error; end
+        unless defined?(#{error_module})
+          module #{error_module}; end
         end
 
         module TagfulMethods
@@ -32,7 +33,7 @@ module Tagful
           def #{method_id}(*args)
             super
           rescue => e
-            e.extend(Error) and raise
+            e.extend(#{error_module}) and raise
           end
         end
 
