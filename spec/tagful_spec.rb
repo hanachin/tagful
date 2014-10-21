@@ -97,6 +97,33 @@ RSpec.describe Tagful do
     tagful :take_cheese!, NotFound
   end
 
+  module Bar
+    def bar
+      'top bar'
+    end
+  end
+
+  class Foo
+    module Bar
+      def self.to_s
+        'Bug!'
+      end
+
+      def bar
+        'Foo::Bar'
+      end
+    end
+
+    include Tagful
+
+    tagful_with ::Bar
+
+    tagful\
+    def bug
+      raise 'bug'
+    end
+  end
+
   describe '.tagful_with' do
     it 'tagged method with specified Module' do
       expect { Robot.new.to_evil }.to raise_error(Robot::Broken, ':(')
@@ -111,6 +138,15 @@ RSpec.describe Tagful do
     context 'tagged with class' do
       it 'raise error by class.exception' do
         expect { Pizza.new('bug') }.to raise_error(Pizza::Dirty, 'something wrong in pizza factory: bug')
+      end
+    end
+
+    context 'tagged with top level module, but the same name module exists in class' do
+      it 'tagged by top level module' do
+        expect { Foo.new.bug }.to raise_error do |error|
+          expect(error).to be_an(::Bar)
+          expect(error.bar).to eq 'top bar'
+        end
       end
     end
   end

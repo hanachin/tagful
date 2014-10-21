@@ -1,6 +1,8 @@
 require "tagful/version"
 
 module Tagful
+  DEFAULT_ERROR_MODULE_NAME = 'Error'
+
   class NotFound < ArgumentError; end
 
   def self.included(base)
@@ -30,7 +32,7 @@ module Tagful
           error_class = @tagful_error_module_or_class
         else
           error_module = @tagful_error_module_or_class
-          error_module ||= 'Error'
+          error_module ||= DEFAULT_ERROR_MODULE_NAME
         end
       else
         if error_module_or_class.is_a?(Class)
@@ -54,17 +56,22 @@ module Tagful
           prepend(TagfulMethods)
         CODE
       else
-        class_eval(<<-CODE)
-          unless defined?(#{error_module})
-            module #{error_module}; end
-          end
+        if error_module == DEFAULT_ERROR_MODULE_NAME
+          error_module = class_eval(<<-CODE)
+            unless defined?(#{error_module})
+              module #{error_module}; end
+            end
+            #{error_module}
+          CODE
+        end
 
+        class_eval(<<-CODE)
           module TagfulMethods
             #{visibility}
             def #{method_id}(*args)
               super
             rescue => e
-              e.extend(#{error_module}) and raise
+              e.extend(::#{error_module.name}) and raise
             end
           end
 
