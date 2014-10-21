@@ -42,15 +42,13 @@ module Tagful
         end
       end
 
-      unless error_class
-        if error_module == DEFAULT_ERROR_MODULE_NAME
-          error_module = class_eval(<<-CODE)
-            unless defined?(#{error_module})
-              module #{error_module}; end
-            end
-            #{error_module}
-          CODE
-        end
+      if error_class.nil? && error_module == DEFAULT_ERROR_MODULE_NAME
+        error_module = class_eval(<<-CODE)
+          unless defined?(#{error_module})
+            module #{error_module}; end
+          end
+          #{error_module}
+        CODE
       end
 
       tagful_methods_module = class_eval('module TagfulMethods; self; end')
