@@ -53,8 +53,8 @@ module Tagful
         end
       end
 
-      m = class_eval('module TagfulMethods; end; TagfulMethods')
-      m.module_eval do
+      class_eval('module TagfulMethods; end')
+      class_eval('TagfulMethods').module_eval do
         define_method(method_id) do |*args, &block|
           begin
             super(*args, &block)
@@ -68,10 +68,7 @@ module Tagful
         end
         send visibility, method_id
       end
-
-      class_eval do
-        prepend(m)
-      end
+      class_eval('prepend(TagfulMethods)')
 
       method_id
     end
