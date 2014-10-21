@@ -1,4 +1,4 @@
-# Tagful
+# Tagful [![Build Status](https://travis-ci.org/hanachin/tagful.svg)](https://travis-ci.org/hanachin/tagful)
 
 Tagging your exception.
 
