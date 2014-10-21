@@ -46,7 +46,7 @@ begin
 rescue Person::Error => e
   puts e.message
 end
-# => hello
+# hello
 ```
 
 You can specify your error module by `tagful_with`:
@@ -70,7 +70,7 @@ begin
 rescue Robot::Broken => e
   puts e.message
 end
-# => :(
+# :(
 ```
 
 or pass your error module to `tagful`:
@@ -92,7 +92,7 @@ begin
 rescue Person::NoManner => e
   puts e.message
 end
-# => burps
+# burps
 ```
 
 You can use `Class` instead of `Module`:
@@ -118,7 +118,7 @@ begin
 rescue Pizza::NotFound => e
   puts e.message
 end
-# => not found: cheese
+# not found: cheese
 ```
 
 ## Contributing
