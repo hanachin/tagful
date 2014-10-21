@@ -42,24 +42,7 @@ module Tagful
         end
       end
 
-      if error_class
-        m = class_eval('module TagfulMethods; end; TagfulMethods')
-
-        m.module_eval do
-          define_method(method_id) do |*args, &block|
-            begin
-              super(*args, &block)
-            rescue => e
-              raise error_class, e.message
-            end
-          end
-          send visibility, method_id
-        end
-
-        class_eval do
-          prepend(m)
-        end
-      else
+      unless error_class
         if error_module == DEFAULT_ERROR_MODULE_NAME
           error_module = class_eval(<<-CODE)
             unless defined?(#{error_module})
@@ -68,22 +51,28 @@ module Tagful
             #{error_module}
           CODE
         end
+      end
 
-        m = class_eval('module TagfulMethods; end; TagfulMethods')
-        m.module_eval do
-          define_method(method_id) do |*args, &block|
-            begin
-              super(*args, &block)
-            rescue => e
+      m = class_eval('module TagfulMethods; end; TagfulMethods')
+      m.module_eval do
+        define_method(method_id) do |*args, &block|
+          begin
+            super(*args, &block)
+          rescue => e
+            if error_class
+              raise error_class, e.message
+            else
               e.extend(error_module) and raise
             end
           end
-          send visibility, method_id
         end
-        class_eval do
-          prepend(m)
-        end
+        send visibility, method_id
       end
+
+      class_eval do
+        prepend(m)
+      end
+
       method_id
     end
   end
