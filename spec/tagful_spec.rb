@@ -147,6 +147,28 @@ RSpec.describe Tagful do
     end
   end
 
+  class Anonymous
+    include Tagful
+
+    def anonymous_module
+      raise 'anonymouse module'
+    end
+    tagful :anonymous_module, Module.new {
+      def anonymous
+        'anonymous module'
+      end
+    }
+
+    def anonymous_class
+      raise 'anonymouse class'
+    end
+    tagful :anonymous_class, Class.new(StandardError) {
+      def anonymous
+        'anonymous class'
+      end
+    }
+  end
+
   describe '.tagful_with' do
     it 'tagged method with specified Module' do
       expect { Robot.new.to_evil }.to raise_error(Robot::Broken, ':(')
@@ -215,6 +237,22 @@ RSpec.describe Tagful do
     context 'tagged with class' do
       it 'raise tagged error class' do
         expect { Pizza.new.take_cheese! }.to raise_error(Pizza::NotFound, 'not found: cheese')
+      end
+    end
+
+    context 'tagged with anonymouse class' do
+      it 'raise tagged error class' do
+        expect { Anonymous.new.anonymous_class }.to raise_error do |error|
+          expect(error.anonymous).to eq 'anonymous class'
+        end
+      end
+    end
+
+    context 'tagged with anonymouse module' do
+      it 'raise tagged error module' do
+        expect { Anonymous.new.anonymous_module }.to raise_error do |error|
+          expect(error.anonymous).to eq 'anonymous module'
+        end
       end
     end
   end
