@@ -83,8 +83,8 @@ or pass your error module to `tagful`:
     end
 
     begin
-      Person.eat
-    rescue NoManner => e
+      Person.new.eat
+    rescue Person::NoManner => e
       puts e.message
     end
     # => burps
