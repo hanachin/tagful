@@ -8,6 +8,10 @@ module Tagful
   end
 
   module ClassMethods
+    def tagful_with(error_module)
+      @tagful_error_module = error_module
+    end
+
     def tagful(method_id, error_module = nil)
       visibility =
         case
@@ -21,6 +25,7 @@ module Tagful
           raise ::Tagful::NoMethod
         end
 
+      error_module ||= @tagful_error_module
       error_module ||= 'Error'
 
       class_eval(<<-CODE)

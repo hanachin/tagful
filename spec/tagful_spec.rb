@@ -46,9 +46,34 @@ RSpec.describe Tagful do
     end
   end
 
+  class Robot
+    include Tagful
+
+    module Broken; end
+    module NoBattery; end
+
+    tagful_with Broken
+
+    tagful\
+    def to_evil
+      raise ':('
+    end
+
+    def walk
+      raise
+    end
+    tagful :walk, NoBattery
+  end
+
   describe '.tagful_with' do
     it 'tagged method with specified Module' do
-      expect { HoumorPerson.new.say_joke }.to raise_error(HoumorPerson::NotFunny, 'T')
+      expect { Robot.new.to_evil }.to raise_error(Robot::Broken, ':(')
+    end
+
+    it 'respect tagful arguments' do
+      expect { Robot.new.walk }.to raise_error(Robot::NoBattery) do |error|
+        expect(error).to_not be_an(Robot::Broken)
+      end
     end
   end
 
