@@ -65,6 +65,21 @@ RSpec.describe Tagful do
     tagful :walk, NoBattery
   end
 
+  class Pizza
+    include Tagful
+
+    class NotFound < ArgumentError
+      def self.exception(message = nil)
+        super("not found: #{message}")
+      end
+    end
+
+    def take_cheese!
+      raise 'cheese'
+    end
+    tagful :take_cheese!, NotFound
+  end
+
   describe '.tagful_with' do
     it 'tagged method with specified Module' do
       expect { Robot.new.to_evil }.to raise_error(Robot::Broken, ':(')
@@ -103,6 +118,12 @@ RSpec.describe Tagful do
           expect(error).to be_an(Hello::Mad).and be_an(Person::Error)
           expect(error.message).to eq 'ugh!'
         end
+      end
+    end
+
+    context 'tagged with class' do
+      it 'raise tagged error class' do
+        expect { Pizza.new.take_cheese! }.to raise_error(Pizza::NotFound, 'not found: cheese')
       end
     end
   end

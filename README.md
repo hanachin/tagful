@@ -47,7 +47,6 @@ Tagging your exception with `tagful`
     end
     # => hello
 
-## TODO
 You can specify your error module by `tagful_with`:
 
     class Robot
@@ -96,7 +95,7 @@ You can use `Class` instead of `Module`:
       include Tagful
 
       class NotFound < ArgumentError
-        def exception(message = nil)
+        def self.exception(message = nil)
           super("not found: #{message}")
         end
       end
